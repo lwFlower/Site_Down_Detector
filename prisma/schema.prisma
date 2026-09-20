@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  monitors  Monitor[]
+  createdAt DateTime  @default(now())
+}
+
+model Monitor {
+  id            String         @id @default(cuid())
+  url           String
+  name          String
+  intervalSec   Int            @default(300)
+  isActive      Boolean        @default(true)
+  lastStatus    MonitorStatus  @default(UNKNOWN)
+  lastCheckedAt DateTime?
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checks        Check[]
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+
+  @@index([isActive, lastCheckedAt])
+}
+
+model Check {
+  id           String   @id @default(cuid())
+  monitorId    String
+  monitor      Monitor  @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  checkedAt    DateTime @default(now())
+  statusCode   Int?
+  responseMs   Int?
+  responseSize Int?
+  isUp         Boolean
+  error        String?
+
+  @@index([monitorId, checkedAt])
+}
+
+model Notification {
+  id        String        @id @default(cuid())
+  monitorId String
+  monitor   Monitor       @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+  channel   String        @default("log")
+  event     MonitorStatus
+  createdAt DateTime      @default(now())
+}
+
+enum MonitorStatus {
+  UP
+  DOWN
+  UNKNOWN
+}
