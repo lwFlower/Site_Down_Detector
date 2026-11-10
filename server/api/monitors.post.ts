@@ -1,15 +1,13 @@
-import { z } from 'zod';
-import { prisma } from '../utils/prisma';
-
-const schema = z.object({
-    url: z.url(),
-    name: z.string().min(1).max(100),
-    intervalSec: z.number().int().min(60).max(86400),
-})
-
+import { prisma, getDemoUser } from "../utils/prisma";
+import { parse, monitorSchema } from "../utils/validation";
+import { publicTarget } from "../utils/probe";
 export default defineEventHandler(async (event) => {
-    const body = schema.parse(await readBody(event))
-    return await prisma.monitor.create({
-        data: {...body, userId: 'temp-user-id' },
-    })
-})
+  const data = parse(monitorSchema, await readBody(event));
+  try {
+    await publicTarget(data.url);
+  } catch (error) {
+    throw createError({ statusCode: 400, message: (error as Error).message });
+  }
+  const user = await getDemoUser();
+  return prisma.monitor.create({ data: { ...data, userId: user.id } });
+});

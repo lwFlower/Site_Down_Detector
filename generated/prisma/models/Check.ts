@@ -520,7 +520,6 @@ export type CheckCreateOrConnectWithoutMonitorInput = {
 
 export type CheckCreateManyMonitorInputEnvelope = {
   data: Prisma.CheckCreateManyMonitorInput | Prisma.CheckCreateManyMonitorInput[]
-  skipDuplicates?: boolean
 }
 
 export type CheckUpsertWithWhereUniqueWithoutMonitorInput = {
@@ -1333,7 +1332,6 @@ export type CheckCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Checks.
    */
   data: Prisma.CheckCreateManyInput | Prisma.CheckCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1352,7 +1350,6 @@ export type CheckCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Checks.
    */
   data: Prisma.CheckCreateManyInput | Prisma.CheckCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

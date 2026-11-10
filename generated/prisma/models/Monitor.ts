@@ -591,7 +591,6 @@ export type MonitorCreateOrConnectWithoutUserInput = {
 
 export type MonitorCreateManyUserInputEnvelope = {
   data: Prisma.MonitorCreateManyUserInput | Prisma.MonitorCreateManyUserInput[]
-  skipDuplicates?: boolean
 }
 
 export type MonitorUpsertWithWhereUniqueWithoutUserInput = {
@@ -1603,7 +1602,6 @@ export type MonitorCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Monitors.
    */
   data: Prisma.MonitorCreateManyInput | Prisma.MonitorCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1622,7 +1620,6 @@ export type MonitorCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Monitors.
    */
   data: Prisma.MonitorCreateManyInput | Prisma.MonitorCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
