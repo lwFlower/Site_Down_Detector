@@ -1,0 +1,41 @@
+/* История выбранного сайта */
+.details {
+  border-top: 3px solid #687de2;
+}
+.details .stat {
+  background: #f9faff;
+}
+.details .stat strong {
+  font-size: 27px;
+}
+.period-label {
+  flex-direction: row;
+  align-items: center;
+}
+.period-label select {
+  width: 130px;
+}
+.pagination {
+  margin-top: 18px;
+  margin-bottom: 30px;
+}
+.event-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf0f6;
+  font-size: 13px;
+}
+.event-row time {
+  color: #8b97aa;
+}
+.delete-area {
+  border-top: 1px solid #edf0f6;
+  padding-top: 20px;
+  margin-top: 25px;
+}
+.delete-area p {
+  margin: 15px 0;
+  font-size: 13px;
+}

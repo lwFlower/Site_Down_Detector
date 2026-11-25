@@ -1,0 +1,47 @@
+/* Узкие экраны */
+@media (max-width: 850px) {
+  .monitor-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .container {
+    width: calc(100% - 24px);
+  }
+  .header .muted {
+    font-size: 11px;
+  }
+  .brand {
+    font-size: 21px;
+  }
+  h1 {
+    font-size: 29px;
+  }
+  .panel {
+    padding: 16px;
+  }
+  .stats-grid {
+    gap: 8px;
+  }
+  .stat {
+    padding: 12px 10px;
+  }
+  .stat strong,
+  .details .stat strong {
+    font-size: 22px;
+  }
+  .stat > span,
+  .stat small {
+    font-size: 10px;
+  }
+  .monitor-form {
+    grid-template-columns: 1fr;
+  }
+  .section-heading {
+    flex-wrap: wrap;
+  }
+  .event-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

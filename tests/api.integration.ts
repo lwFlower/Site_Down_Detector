@@ -87,6 +87,9 @@ try {
   });
   equal(created.status, 200);
   const id = created.data.id;
+  const html = await (await fetch(base)).text();
+  equal(html.includes("Тест"), true);
+  equal(html.includes("Добавить сайт"), true);
   equal((await request("/api/monitors")).data.length, 1);
   equal((await request(`/api/monitors/${id}`)).data.uptime, null);
   for (let i = 0; i < 13; i++) {

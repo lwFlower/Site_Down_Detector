@@ -17,7 +17,7 @@ export const monitorSchema = z.object({
   intervalSec: z
     .number()
     .int()
-    .min(60, "Минимальный интервал — 60 секунд")
+    .min(30, "Минимальный интервал — 30 секунд")
     .max(86400),
   isActive: z.boolean().optional(),
 });
@@ -38,3 +38,5 @@ export const historyQuerySchema = z.object({
     .refine((n) => [1, 7, 30].includes(n), "Выберите 1, 7 или 30 дней")
     .default(7),
 });
+
+export const activitySchema = z.object({ isActive: z.boolean() });

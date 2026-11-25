@@ -9,7 +9,8 @@
     "postinstall": "node scripts/create-db.mjs && prisma generate && prisma db push && nuxt prepare",
     "typecheck": "nuxt typecheck",
     "test": "node --import tsx --test tests/*.test.ts",
-    "test:api": "node --import tsx tests/api.integration.ts"
+    "test:api": "node --import tsx tests/api.integration.ts",
+    "demo": "node scripts/test-server.mjs"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",

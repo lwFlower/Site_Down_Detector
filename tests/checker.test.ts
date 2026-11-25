@@ -2,12 +2,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { probe, isPublicAddress } from "../server/utils/probe";
+import { probe } from "../server/monitoring/http/probe";
+import { isPublicAddress } from "../server/monitoring/http/target";
 import {
   uptimePercent,
   statusChanged,
   runPool,
-} from "../server/utils/checker-core";
+} from "../server/monitoring/helpers";
 
 test("uptime: период без данных, частичный и полный успех", () => {
   assert.equal(uptimePercent(0, 0), null);

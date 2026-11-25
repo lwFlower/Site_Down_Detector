@@ -1,12 +1,6 @@
-import { z } from "zod";
-import { getMonitor } from "../../utils/monitor";
-import { prisma } from "../../utils/prisma";
-import { parse } from "../../utils/validation";
+import { setMonitorActive } from "../../services/monitors";
+import { parse, activitySchema } from "../../validators/monitor";
 export default defineEventHandler(async (event) => {
-  const monitor = await getMonitor(event);
-  const data = parse(
-    z.object({ isActive: z.boolean() }),
-    await readBody(event),
-  );
-  return prisma.monitor.update({ where: { id: monitor.id }, data });
+  const { isActive } = parse(activitySchema, await readBody(event));
+  return setMonitorActive(getRouterParam(event, "id"), isActive);
 });

@@ -1,51 +1,7 @@
-import { getMonitor } from "../../utils/monitor";
-import { prisma } from "../../utils/prisma";
-import { parse, historyQuerySchema } from "../../utils/validation";
-import { uptimePercent } from "../../utils/checker-core";
-export default defineEventHandler(async (event) => {
-  const monitor = await getMonitor(event);
+import { getMonitorHistory } from "../../services/history";
+import { parse, historyQuerySchema } from "../../validators/monitor";
+
+export default defineEventHandler((event) => {
   const { page, days } = parse(historyQuerySchema, getQuery(event));
-  const now = new Date();
-  const since = new Date(now.getTime() - days * 86400000);
-  const where = { monitorId: monitor.id, checkedAt: { gte: since, lte: now } };
-  const pageSize = 10;
-  // Единый снимок данных: счётчики, статистика и страница согласованы.
-  const result = await prisma.$transaction(
-    async (tx) => {
-      const total = await tx.check.count({ where });
-      const up = await tx.check.count({ where: { ...where, isUp: true } });
-      const avg = await tx.check.aggregate({
-        where,
-        _avg: { responseMs: true },
-      });
-      const checks = await tx.check.findMany({
-        where,
-        orderBy: [{ checkedAt: "desc" }, { id: "desc" }],
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      });
-      const notifications = await tx.notification.findMany({
-        where: { monitorId: monitor.id, createdAt: { gte: since, lte: now } },
-        orderBy: { createdAt: "desc" },
-        take: 20,
-      });
-      return {
-        checks,
-        notifications,
-        total,
-        uptime: uptimePercent(up, total),
-        averageMs: avg._avg.responseMs,
-      };
-    },
-    { isolationLevel: "Serializable" },
-  );
-  return {
-    monitor,
-    ...result,
-    page,
-    pageSize,
-    totalPages: Math.ceil(result.total / pageSize),
-    since,
-    until: now,
-  };
+  return getMonitorHistory(getRouterParam(event, "id"), page, days);
 });

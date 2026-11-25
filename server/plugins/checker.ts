@@ -1,5 +1,5 @@
-import { checkDueMonitors } from "../utils/checker";
-import { getDemoUser } from "../utils/prisma";
+import { checkDueMonitors } from "../monitoring/scheduler";
+import { getDemoUser } from "../database/client";
 export default defineNitroPlugin(async (nitro) => {
   await getDemoUser();
   const tick = () =>
