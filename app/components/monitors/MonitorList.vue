@@ -17,7 +17,6 @@ const emit = defineEmits<{
   <section class="panel">
     <div class="section-heading">
       <h2>Ваши сайты</h2>
-      <span class="hint">Обновление каждые 5 секунд</span>
     </div>
     <p v-if="loadError" class="error" role="alert">
       {{ loadError }}
