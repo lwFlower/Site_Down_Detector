@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
   css: ["~/assets/css/main.css"],
-  nitro: { preset: "node-server" },
+  nitro: { preset: "vercel" },
   app: {
     head: {
       title: "SiteWatch — мониторинг сайтов",
