@@ -1,7 +1,4 @@
 node_modules/
-.nuxt/
-.output/
-generated/
-prisma/*.db*
+dist/
 *.log
 .DS_Store

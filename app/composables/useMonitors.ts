@@ -1,8 +1,16 @@
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import {
+  monitors,
+  storageError,
+  initializeStore,
+  addMonitor,
+  toggleMonitor,
+  checkDueMonitors,
+} from "../services/monitor-store";
+
 export function useMonitors() {
-  const request = useFetch("/api/monitors", { default: () => [] });
-  const { data: monitors, refresh, error: loadError } = request;
-  const form = reactive({ name: "", url: "", intervalSec: 60 });
-  const busy = ref(false);
+  initializeStore();
+  const form = reactive({ name: "", url: "", intervalSec: 30 });
   const error = ref("");
   const up = computed(
     () =>
@@ -13,52 +21,34 @@ export function useMonitors() {
       monitors.value.filter((m) => m.isActive && m.lastStatus === "DOWN")
         .length,
   );
-  async function add() {
-    busy.value = true;
+  function add() {
     error.value = "";
     try {
-      await $fetch("/api/monitors", { method: "POST", body: form });
+      addMonitor(form);
       form.name = "";
       form.url = "";
-      await refresh();
     } catch (e) {
-      error.value = errorMessage(e);
-    } finally {
-      busy.value = false;
+      error.value = (e as Error).message;
     }
   }
-  async function toggle(id: string, isActive: boolean) {
-    busy.value = true;
+  function toggle(id: string) {
     error.value = "";
     try {
-      await $fetch(`/api/monitors/${id}`, {
-        method: "PATCH",
-        body: { isActive: !isActive },
-      });
-      await refresh();
+      toggleMonitor(id);
     } catch (e) {
-      error.value = errorMessage(e);
-    } finally {
-      busy.value = false;
+      error.value = (e as Error).message;
     }
   }
   let timer: ReturnType<typeof setInterval>;
   onMounted(() => {
-    timer = setInterval(() => refresh(), 5000);
+    timer = setInterval(() => {
+      try {
+        checkDueMonitors();
+      } catch {
+        /* Сообщение уже находится в storageError. */
+      }
+    }, 1000);
   });
   onBeforeUnmount(() => clearInterval(timer));
-
-  return {
-    ready: request,
-    monitors,
-    refresh,
-    loadError,
-    form,
-    busy,
-    error,
-    up,
-    down,
-    add,
-    toggle,
-  };
+  return { monitors, storageError, form, error, up, down, add, toggle };
 }

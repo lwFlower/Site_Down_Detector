@@ -1,27 +1,21 @@
 <script setup lang="ts">
 import StatusBadge from "../common/StatusBadge.vue";
-import type { MonitorSummary } from "~~/shared/types/monitor";
+import type { MonitorSummary } from "../../types/monitor";
 defineProps<{
   monitors: MonitorSummary[];
   selectedId: string;
-  busy: boolean;
-  loadError: string;
 }>();
 const emit = defineEmits<{
   select: [id: string];
-  toggle: [id: string, active: boolean];
-  refresh: [];
+  toggle: [id: string];
 }>();
 </script>
 <template>
   <section class="panel">
     <div class="section-heading">
       <h2>Ваши сайты</h2>
+      <span class="hint">Сохранение в localStorage</span>
     </div>
-    <p v-if="loadError" class="error" role="alert">
-      {{ loadError }}
-      <button class="text-button" @click="emit('refresh')">Повторить</button>
-    </p>
     <div v-if="!monitors.length" class="empty">
       Пока нет мониторов. Добавьте первый сайт с помощью формы выше.
     </div>
@@ -59,11 +53,7 @@ const emit = defineEmits<{
               <div class="actions">
                 <button class="button small" @click="emit('select', m.id)">
                   История</button
-                ><button
-                  class="button small"
-                  :disabled="busy"
-                  @click="emit('toggle', m.id, m.isActive)"
-                >
+                ><button class="button small" @click="emit('toggle', m.id)">
                   {{ m.isActive ? "Пауза" : "Продолжить" }}
                 </button>
               </div>

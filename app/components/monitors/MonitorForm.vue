@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { MonitorFormData } from "~~/shared/types/monitor";
-defineProps<{ form: MonitorFormData; busy: boolean; error: string }>();
+import type { MonitorFormData } from "../../types/monitor";
+defineProps<{ form: MonitorFormData; error: string }>();
 const emit = defineEmits<{ submit: [] }>();
 </script>
 <template>
@@ -31,12 +31,10 @@ const emit = defineEmits<{ submit: [] }>();
           <option :value="3600">1 час</option>
         </select></label
       >
-      <button class="button primary" :disabled="busy">
-        {{ busy ? "Подождите…" : "+ Добавить" }}
-      </button>
+      <button class="button primary">+ Добавить</button>
     </form>
     <p class="hint">
-      Первая проверка запускается автоматически. Только публичные HTTP(S) сайты.
+      Результаты демонстрационные. Интервал применяется при открытой странице.
     </p>
     <p v-if="error" class="error" role="alert">{{ error }}</p>
   </section>

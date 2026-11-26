@@ -1,26 +1,12 @@
 <script setup lang="ts">
-import MonitorForm from "~/components/monitors/MonitorForm.vue";
-import MonitorList from "~/components/monitors/MonitorList.vue";
-import MonitorDetails from "~/components/monitors/MonitorDetails.vue";
-const {
-  ready,
-  monitors,
-  refresh,
-  loadError,
-  form,
-  busy,
-  error,
-  up,
-  down,
-  add,
-  toggle,
-} = useMonitors();
-await ready;
+import { ref } from "vue";
+import MonitorForm from "../components/monitors/MonitorForm.vue";
+import MonitorList from "../components/monitors/MonitorList.vue";
+import MonitorDetails from "../components/monitors/MonitorDetails.vue";
+import { useMonitors } from "../composables/useMonitors";
+const { monitors, storageError, form, error, up, down, add, toggle } =
+  useMonitors();
 const selectedId = ref("");
-async function deleted() {
-  selectedId.value = "";
-  await refresh();
-}
 </script>
 
 <template>
@@ -29,7 +15,8 @@ async function deleted() {
       <span class="eyebrow">МОНИТОРИНГ САЙТОВ</span>
       <h1>Всё ли работает?</h1>
       <p class="muted">
-        Добавьте сайт — мы сохраним результаты проверок и изменения статуса.
+        Демоверсия. Добавьте сайт и покажите сбой или восстановление кнопками в
+        истории.
       </p>
     </div>
     <div class="stats-grid">
@@ -43,21 +30,19 @@ async function deleted() {
         <span>Недоступны</span><strong class="red-text">{{ down }}</strong>
       </div>
     </div>
-    <MonitorForm :form="form" :busy="busy" :error="error" @submit="add" />
+    <p v-if="storageError" class="error" role="alert">{{ storageError }}</p>
+    <MonitorForm :form="form" :error="error" @submit="add" />
     <MonitorList
       :monitors="monitors"
       :selected-id="selectedId"
-      :busy="busy"
-      :load-error="loadError ? errorMessage(loadError) : ''"
       @select="selectedId = $event"
       @toggle="toggle"
-      @refresh="refresh()"
     />
     <MonitorDetails
       v-if="selectedId"
       :id="selectedId"
       :key="selectedId"
-      @deleted="deleted"
+      @deleted="selectedId = ''"
       @close="selectedId = ''"
     />
   </main>

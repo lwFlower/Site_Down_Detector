@@ -1,39 +1,37 @@
+import { computed, ref } from "vue";
+import {
+  monitors,
+  deleteMonitor,
+  checkMonitor,
+} from "../services/monitor-store";
+import { getHistory } from "../services/monitor-model";
+import type { Status } from "../types/monitor";
+
 export function useMonitorDetails(id: string) {
   const days = ref(7);
   const page = ref(1);
-  const request = useFetch(`/api/monitors/${id}`, { query: { days, page } });
-  const { data, refresh, error: loadError } = request;
   const deleting = ref(false);
-  const busy = ref(false);
   const error = ref("");
-  async function remove() {
-    busy.value = true;
-    error.value = "";
+  const data = computed(() => {
+    const monitor = monitors.value.find((m) => m.id === id);
+    return monitor ? getHistory(monitor, days.value, page.value) : null;
+  });
+  function remove() {
     try {
-      await $fetch(`/api/monitors/${id}`, { method: "DELETE" });
+      deleteMonitor(id);
       return true;
     } catch (e) {
-      error.value = errorMessage(e);
-    } finally {
-      busy.value = false;
+      error.value = (e as Error).message;
+      return false;
     }
   }
-  let timer: ReturnType<typeof setInterval>;
-  onMounted(() => {
-    timer = setInterval(() => refresh(), 5000);
-  });
-  onBeforeUnmount(() => clearInterval(timer));
-
-  return {
-    ready: request,
-    data,
-    refresh,
-    loadError,
-    days,
-    page,
-    deleting,
-    busy,
-    error,
-    remove,
-  };
+  function check(status?: Status) {
+    error.value = "";
+    try {
+      checkMonitor(id, status);
+    } catch (e) {
+      error.value = (e as Error).message;
+    }
+  }
+  return { data, days, page, deleting, error, remove, check };
 }

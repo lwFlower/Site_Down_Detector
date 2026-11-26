@@ -2,21 +2,12 @@
 import StatusBadge from "../common/StatusBadge.vue";
 import CheckHistory from "./CheckHistory.vue";
 import MonitorEvents from "./MonitorEvents.vue";
+import { useMonitorDetails } from "../../composables/useMonitorDetails";
 const props = defineProps<{ id: string }>();
 const emit = defineEmits<{ deleted: []; close: [] }>();
-const {
-  ready,
-  data,
-  refresh,
-  loadError,
-  days,
-  page,
-  deleting,
-  busy,
-  error,
-  remove,
-} = useMonitorDetails(props.id);
-await ready;
+const { data, days, page, deleting, error, remove, check } = useMonitorDetails(
+  props.id,
+);
 async function deleteMonitor() {
   if (await remove()) emit("deleted");
 }
@@ -24,10 +15,6 @@ async function deleteMonitor() {
 
 <template>
   <section class="panel details">
-    <p v-if="loadError" class="error" role="alert">
-      {{ errorMessage(loadError) }}
-      <button class="text-button" @click="refresh()">Повторить</button>
-    </p>
     <template v-if="data">
       <div class="section-heading">
         <div>
@@ -49,7 +36,7 @@ async function deleteMonitor() {
           </select></label
         >
       </div>
-      <div class="stats-grid">
+      <div class="stats-grid detail-stats">
         <div class="stat">
           <span>Аптайм</span
           ><strong class="green-text">{{
@@ -58,20 +45,43 @@ async function deleteMonitor() {
           ><small>Доля успешных проверок</small>
         </div>
         <div class="stat">
-          <span>Средний отклик</span
-          ><strong>{{
-            data.averageMs === null ? "—" : `${Math.round(data.averageMs)} мс`
-          }}</strong
-          ><small>За выбранный период</small>
-        </div>
-        <div class="stat">
           <span>Проверок</span><strong>{{ data.total }}</strong
-          ><small>Интервал: {{ data.monitor.intervalSec / 60 }} мин</small>
+          ><small>Интервал: {{ data.monitor.intervalSec }} сек</small>
         </div>
       </div>
       <p class="hint">
-        Все даты — UTC. Аптайм: успешные проверки / все проверки × 100%.
+        Все даты — UTC. Аптайм рассчитывается по сохранённым демонстрационным
+        проверкам. Хранятся последние 500 проверок и 100 событий на сайт. Время
+        и размер ответа не измеряются.
       </p>
+      <div class="demo-controls">
+        <p>
+          Демонстрация доступности. Кнопки сразу создают результат проверки.
+        </p>
+        <div class="actions">
+          <button
+            class="button"
+            :disabled="!data.monitor.isActive"
+            @click="check()"
+          >
+            Проверить сейчас
+          </button>
+          <button
+            class="button danger"
+            :disabled="!data.monitor.isActive"
+            @click="check('DOWN')"
+          >
+            Сымитировать сбой
+          </button>
+          <button
+            class="button primary"
+            :disabled="!data.monitor.isActive"
+            @click="check('UP')"
+          >
+            Восстановить
+          </button>
+        </div>
+      </div>
       <CheckHistory
         :checks="data.checks"
         :page="page"
@@ -80,25 +90,15 @@ async function deleteMonitor() {
       />
       <MonitorEvents :notifications="data.notifications" />
       <div class="delete-area">
-        <button
-          class="button danger small"
-          :disabled="busy"
-          @click="deleting = !deleting"
-        >
+        <button class="button danger small" @click="deleting = !deleting">
           Удалить монитор
         </button>
         <div v-if="deleting">
           <p>Удалить сайт и всю его историю? Отменить это действие нельзя.</p>
           <div class="actions">
-            <button
-              class="button danger"
-              :disabled="busy"
-              @click="deleteMonitor"
-            >
+            <button class="button danger" @click="deleteMonitor">
               Да, удалить</button
-            ><button class="button" :disabled="busy" @click="deleting = false">
-              Отмена
-            </button>
+            ><button class="button" @click="deleting = false">Отмена</button>
           </div>
         </div>
       </div>

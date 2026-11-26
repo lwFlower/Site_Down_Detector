@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import StatusBadge from "../common/StatusBadge.vue";
-import { formatDate, formatSize } from "~/utils/format";
-import type { CheckRecord } from "~~/shared/types/monitor";
+import { formatDate, formatSize } from "../../utils/format";
+import type { CheckRecord } from "../../types/monitor";
 defineProps<{ checks: CheckRecord[]; page: number; totalPages: number }>();
 const emit = defineEmits<{ page: [value: number] }>();
 </script>
